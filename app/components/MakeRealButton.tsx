@@ -8,9 +8,9 @@ export function MakeRealButton() {
 
 	const handleClick = useCallback(async () => {
 		try {
-			const input = document.getElementById('openai_key_risky_but_cool') as HTMLInputElement
+			const input = document.getElementById('ollama_endpoint_input') as HTMLInputElement
 			const apiKey = input?.value ?? null
-			if (!apiKey) throw Error('Make sure you include your API Key!')
+			if (!apiKey) throw Error('Make sure you include your Ollama endpoint URL!')
 			await makeReal(editor, apiKey)
 		} catch (e) {
 			console.error(e)

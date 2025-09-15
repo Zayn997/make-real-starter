@@ -10,7 +10,7 @@ export function RiskyButCoolAPIKeyInput() {
 
 	const handleQuestionMessage = useCallback(() => {
 		window.alert(
-			`If you have an OpenAI developer key, you can put it in this input and it will be used when posting to OpenAI.\n\nSee https://platform.openai.com/api-keys to get a key.\n\nPutting API keys into boxes is generally a bad idea! If you have any concerns, create an API key and then revoke it after using this site.`
+			`This app is configured to use Ollama running locally. The endpoint URL should be your Ollama API endpoint (e.g., http://localhost:11434/api/generate).\n\nMake sure you have Ollama installed and running with the qwen2.5:7b model available.\n\nSee https://ollama.ai for installation instructions.`
 		)
 	}, [])
 
@@ -19,13 +19,14 @@ export function RiskyButCoolAPIKeyInput() {
 			<div className="your-own-api-key__inner">
 				<div className="input__wrapper">
 					<input
-						id="openai_key_risky_but_cool"
+						id="ollama_endpoint_input"
 						defaultValue={
-							process.env.NEXT_PUBLIC_OPENAI_API_KEY ?? localStorage.getItem('makeitreal_key') ?? ''
+							process.env.NEXT_PUBLIC_API_KEY ?? localStorage.getItem('makeitreal_key') ?? ''
 						}
 						onChange={handleChange}
 						spellCheck={false}
 						autoCapitalize="off"
+						placeholder="http://localhost:11434/api/generate"
 					/>
 				</div>
 				<button className="question__button" onClick={handleQuestionMessage}>

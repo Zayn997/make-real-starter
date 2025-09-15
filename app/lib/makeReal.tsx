@@ -1,7 +1,7 @@
 import { Editor, createShapeId, getSvgAsImage, track } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { blobToBase64 } from './blobToBase64'
-import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
+import { getHtmlFromAI } from './getHtmlFromAI'
 import { getTextFromSelectedShapes } from './getSelectionAsText'
 
 export async function makeReal(editor: Editor, apiKey: string) {
@@ -37,9 +37,9 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		(shape) => shape.type === 'response'
 	) as PreviewShape[]
 
-	// Send everything to OpenAI and get some HTML back
+	// Send everything to Ollama and get some HTML back
 	try {
-		const json = await getHtmlFromOpenAI({
+		const json = await getHtmlFromAI({
 			image: dataUrl,
 			apiKey,
 			text: getTextFromSelectedShapes(editor),
@@ -47,7 +47,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 			theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
 		})
 
-		if (!json) throw Error('Could not contact OpenAI.')
+		if (!json) throw Error('Could not contact Ollama.')
 		if (json?.error) throw Error(`${json.error.message?.slice(0, 128)}...`)
 
 		// Extract the HTML from the response

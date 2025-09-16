@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 import {
 	TLBaseShape,
 	BaseBoxShapeUtil,
@@ -43,6 +43,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
 		const toast = useToasts()
+		const [viewMode, setViewMode] = useState<'rendered' | 'code'>('rendered')
 
 		const boxShadow = useValue(
 			'box shadow',
@@ -73,19 +74,43 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
 				{htmlToUse ? (
-					<iframe
-						id={`iframe-1-${shape.id}`}
-						srcDoc={htmlToUse}
-						width={toDomPrecision(shape.props.w)}
-						height={toDomPrecision(shape.props.h)}
-						draggable={false}
-						style={{
-							pointerEvents: isEditing ? 'auto' : 'none',
-							boxShadow,
-							border: '1px solid var(--color-panel-contrast)',
-							borderRadius: 'var(--radius-2)',
-						}}
-					/>
+					viewMode === 'rendered' ? (
+						<iframe
+							id={`iframe-1-${shape.id}`}
+							srcDoc={htmlToUse}
+							width={toDomPrecision(shape.props.w)}
+							height={toDomPrecision(shape.props.h)}
+							draggable={false}
+							style={{
+								pointerEvents: isEditing ? 'auto' : 'none',
+								boxShadow,
+								border: '1px solid var(--color-panel-contrast)',
+								borderRadius: 'var(--radius-2)',
+							}}
+						/>
+					) : (
+						<pre
+							style={{
+								width: toDomPrecision(shape.props.w),
+								height: toDomPrecision(shape.props.h),
+								overflow: 'auto',
+								padding: '12px',
+								margin: 0,
+								backgroundColor: 'var(--color-low)',
+								border: '1px solid var(--color-panel-contrast)',
+								borderRadius: 'var(--radius-2)',
+								fontSize: '11px',
+								fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+								color: 'var(--color-text)',
+								lineHeight: 1.4,
+								whiteSpace: 'pre-wrap',
+								wordBreak: 'break-word',
+								boxShadow,
+							}}
+						>
+							{shape.props.html}
+						</pre>
+					)
 				) : (
 					<div
 						style={{
@@ -101,6 +126,27 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 						<DefaultSpinner />
 					</div>
 				)}
+				<div
+					style={{
+						position: 'absolute',
+						top: 0,
+						right: -80,
+						height: 40,
+						width: 40,
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						cursor: 'pointer',
+						pointerEvents: 'all',
+					}}
+					onClick={() => {
+						setViewMode(viewMode === 'rendered' ? 'code' : 'rendered')
+					}}
+					onPointerDown={stopEventPropagation}
+					title={`Switch to ${viewMode === 'rendered' ? 'code' : 'rendered'} view`}
+				>
+					<TldrawUiIcon icon={viewMode === 'rendered' ? 'code' : 'eye'} />
+				</div>
 				<div
 					style={{
 						position: 'absolute',

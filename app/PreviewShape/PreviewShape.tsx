@@ -100,7 +100,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								border: '1px solid var(--color-panel-contrast)',
 								borderRadius: 'var(--radius-2)',
 								fontSize: '11px',
-								fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+								fontFamily:
+									'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
 								color: 'var(--color-text)',
 								lineHeight: 1.4,
 								whiteSpace: 'pre-wrap',
@@ -145,7 +146,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 					onPointerDown={stopEventPropagation}
 					title={`Switch to ${viewMode === 'rendered' ? 'code' : 'rendered'} view`}
 				>
-					<TldrawUiIcon icon={viewMode === 'rendered' ? 'code' : 'eye'} />
+					<TldrawUiIcon icon={viewMode === 'rendered' ? 'code' : 'image'} />
 				</div>
 				<div
 					style={{

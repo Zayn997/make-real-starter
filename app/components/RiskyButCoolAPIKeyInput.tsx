@@ -10,7 +10,7 @@ export function RiskyButCoolAPIKeyInput() {
 
 	const handleQuestionMessage = useCallback(() => {
 		window.alert(
-			`This app is configured to use Ollama running locally. The endpoint URL should be your Ollama API endpoint (e.g., http://localhost:11434/api/generate).\n\nMake sure you have Ollama installed and running with the qwen2.5:7b model available.\n\nSee https://ollama.ai for installation instructions.`
+			`This app is configured to use Ollama running locally. The endpoint URL should be your Ollama API endpoint (e.g., http://localhost:11434/api/generate).\n\nMake sure you have Ollama installed and running with the gemma3:12b model available.\n\nSee https://ollama.ai for installation instructions.`
 		)
 	}, [])
 

@@ -40,14 +40,14 @@ export async function getHtmlFromAI({
 	const base64Image = image.split(',')[1]
 
 	const body: OllamaGenerateRequest = {
-		model: 'qwen2.5:7b',
+		model: 'gemma3:12b',
 		prompt: promptText,
 		images: [base64Image],
 		stream: false,
 		options: {
 			temperature: 0,
 			seed: 42,
-		}
+		},
 	}
 
 	let json = null
@@ -65,11 +65,13 @@ export async function getHtmlFromAI({
 		// Transform Ollama response to match OpenAI format
 		if (json && json.response) {
 			json = {
-				choices: [{
-					message: {
-						content: json.response
-					}
-				}]
+				choices: [
+					{
+						message: {
+							content: json.response,
+						},
+					},
+				],
 			}
 		}
 	} catch (e: any) {

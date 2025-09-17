@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { ReactElement, useState } from 'react'
+import { ReactElement, useState, useEffect, useRef } from 'react'
 import {
 	TLBaseShape,
 	BaseBoxShapeUtil,
@@ -44,6 +44,9 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		const isEditing = useIsEditing(shape.id)
 		const toast = useToasts()
 		const [viewMode, setViewMode] = useState<'rendered' | 'code'>('rendered')
+		const [isMenuOpen, setIsMenuOpen] = useState(false)
+		const menuRef = useRef<HTMLDivElement | null>(null)
+		const menuButtonRef = useRef<HTMLButtonElement | null>(null)
 
 		const boxShadow = useValue(
 			'box shadow',
@@ -53,6 +56,25 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			},
 			[this.editor]
 		)
+
+		useEffect(() => {
+			if (!isMenuOpen) {
+				return
+			}
+
+			const handlePointerDown = (event: PointerEvent) => {
+				const target = event.target as Node
+				if (menuRef.current?.contains(target) || menuButtonRef.current?.contains(target)) {
+					return
+				}
+				setIsMenuOpen(false)
+			}
+
+			document.addEventListener('pointerdown', handlePointerDown)
+			return () => {
+				document.removeEventListener('pointerdown', handlePointerDown)
+			}
+		}, [isMenuOpen])
 
 		// Kind of a hack—we're preventing users from pinching-zooming into the iframe
 		const htmlToUse = shape.props.html.replace(
@@ -127,53 +149,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 						<DefaultSpinner />
 					</div>
 				)}
-				<div
-					style={{
-						position: 'absolute',
-						top: 0,
-						right: -80,
-						height: 40,
-						width: 40,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						cursor: 'pointer',
-						pointerEvents: 'all',
-					}}
-					onClick={() => {
-						setViewMode(viewMode === 'rendered' ? 'code' : 'rendered')
-					}}
-					onPointerDown={stopEventPropagation}
-					title={`Switch to ${viewMode === 'rendered' ? 'code' : 'rendered'} view`}
-				>
-					<TldrawUiIcon icon={viewMode === 'rendered' ? 'code' : 'image'} />
-				</div>
-				<div
-					style={{
-						position: 'absolute',
-						top: 0,
-						right: -40,
-						height: 40,
-						width: 40,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						cursor: 'pointer',
-						pointerEvents: 'all',
-					}}
-					onClick={() => {
-						if (navigator && navigator.clipboard) {
-							navigator.clipboard.writeText(shape.props.html)
-							toast.addToast({
-								icon: 'duplicate',
-								title: 'Copied to clipboard',
-							})
-						}
-					}}
-					onPointerDown={stopEventPropagation}
-				>
-					<TldrawUiIcon icon="duplicate" />
-				</div>
 				{htmlToUse && (
 					<div
 						style={{
@@ -276,3 +251,11 @@ const ROTATING_BOX_SHADOWS = [
 		color: '#0000001f',
 	},
 ]
+
+
+
+
+
+
+
+

@@ -10,6 +10,7 @@ export function MakeRealButton() {
 		try {
 			const input = document.getElementById('ollama_endpoint_input') as HTMLInputElement
 			const apiKey = input?.value ?? null
+			console.log('Make Real clicked, apiKey:', apiKey)
 			if (!apiKey) throw Error('Make sure you include your Ollama endpoint URL!')
 			await makeReal(editor, apiKey)
 		} catch (e) {

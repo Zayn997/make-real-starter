@@ -5,6 +5,7 @@ import { getHtmlFromAI } from './getHtmlFromAI'
 import { getTextFromSelectedShapes } from './getSelectionAsText'
 
 export async function makeReal(editor: Editor, apiKey: string) {
+	console.log('makeReal called with apiKey:', apiKey)
 	// Get the selected shapes (we need at least one)
 	const selectedShapes = editor.getSelectedShapes()
 	if (selectedShapes.length === 0) throw Error('First select something to make real.')
@@ -38,6 +39,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 	) as PreviewShape[]
 
 	// Send everything to Ollama and get some HTML back
+	console.log('Data to send - text:', getTextFromSelectedShapes(editor), 'theme:', editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light', 'previousPreviews count:', previousPreviews.length)
 	try {
 		const json = await getHtmlFromAI({
 			image: dataUrl,

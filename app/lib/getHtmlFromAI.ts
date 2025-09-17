@@ -1,6 +1,11 @@
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { SYSTEM_PROMPT, USER_PROMPT_WITH_PREVIOUS_DESIGN, USER_PROMPT } from '../prompt'
 
+function getSelectedModel(): string {
+	if (typeof window === 'undefined') return 'qwen3:8b' // SSR fallback
+	return localStorage.getItem('makeitreal_model') || 'qwen3:8b'
+}
+
 export async function getHtmlFromAI({
 	image,
 	apiKey,
@@ -39,8 +44,9 @@ export async function getHtmlFromAI({
 	// Extract base64 image data from the data URL
 	const base64Image = image.split(',')[1]
 
+	const selectedModel = getSelectedModel()
 	const body: OllamaGenerateRequest = {
-		model: 'gemma3:12b',
+		model: selectedModel,
 		prompt: promptText,
 		images: [base64Image],
 		stream: false,
@@ -50,6 +56,8 @@ export async function getHtmlFromAI({
 		},
 	}
 
+	console.log('Model used:', body.model, 'Data sent:', body)
+
 	let json = null
 
 	try {
@@ -58,6 +66,7 @@ export async function getHtmlFromAI({
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			mode: 'cors',
 			body: JSON.stringify(body),
 		})
 		json = await resp.json()

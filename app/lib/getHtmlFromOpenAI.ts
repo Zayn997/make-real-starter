@@ -40,7 +40,7 @@ export async function getHtmlFromAI({
 	const base64Image = image.split(',')[1]
 
 	const body: OllamaGenerateRequest = {
-		model: 'gemma3:12b',
+		model: 'qwen3:8b',
 		prompt: promptText,
 		images: [base64Image],
 		stream: false,
@@ -58,6 +58,7 @@ export async function getHtmlFromAI({
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			mode: 'cors',
 			body: JSON.stringify(body),
 		})
 		json = await resp.json()

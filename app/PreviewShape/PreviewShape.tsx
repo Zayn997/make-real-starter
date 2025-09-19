@@ -70,11 +70,53 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 				setIsMenuOpen(false)
 			}
 
+			const handleKeyDown = (event: KeyboardEvent) => {
+				if (event.key === 'Escape') {
+					setIsMenuOpen(false)
+				}
+			}
+
 			document.addEventListener('pointerdown', handlePointerDown)
+			document.addEventListener('keydown', handleKeyDown)
 			return () => {
 				document.removeEventListener('pointerdown', handlePointerDown)
+				document.removeEventListener('keydown', handleKeyDown)
 			}
 		}, [isMenuOpen])
+
+		const viewToggleLabel =
+			viewMode === 'rendered' ? 'Switch to code view' : 'Switch to rendered view'
+		const viewToggleIcon =
+			viewMode === 'rendered' ? (
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="2"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				>
+					<polyline points="16,18 22,12 16,6" />
+					<polyline points="8,6 2,12 8,18" />
+				</svg>
+			) : (
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="2"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				>
+					<rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+					<circle cx="8.5" cy="8.5" r="1.5" />
+					<polyline points="21,15 16,10 5,21" />
+				</svg>
+			)
 
 		// Kind of a hack—we're preventing users from pinching-zooming into the iframe
 		const htmlToUse = shape.props.html.replace(
@@ -147,6 +189,125 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 						}}
 					>
 						<DefaultSpinner />
+					</div>
+				)}
+
+				<button
+					ref={menuButtonRef}
+					type="button"
+					style={{
+						position: 'absolute',
+						top: 0,
+						left: 'calc(100% + 8px)',
+						height: 40,
+						width: 40,
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						cursor: 'pointer',
+						pointerEvents: 'all',
+						background: 'var(--color-panel)',
+						border: '1px solid var(--color-muted-1)',
+						borderRadius: 'var(--radius-2)',
+						color: 'var(--color-text)',
+						transition: 'background-color 0.2s ease, transform 0.2s ease',
+					}}
+					onClick={(event) => {
+					event.stopPropagation()
+					setIsMenuOpen((prev) => !prev)
+				}}
+					onPointerDown={stopEventPropagation}
+					aria-haspopup="true"
+					aria-expanded={isMenuOpen}
+					title="Preview options"
+				>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="currentColor"
+						focusable="false"
+						aria-hidden="true"
+					>
+						<circle cx="12" cy="5" r="1.5" />
+						<circle cx="12" cy="12" r="1.5" />
+						<circle cx="12" cy="19" r="1.5" />
+					</svg>
+				</button>
+				{isMenuOpen && (
+					<div
+						ref={menuRef}
+						style={{
+							position: 'absolute',
+							top: 44,
+							left: 'calc(100% + 8px)',
+							minWidth: 190,
+							padding: 8,
+							background: 'var(--color-panel)',
+							border: '1px solid var(--color-muted-1)',
+							borderRadius: 'var(--radius-2)',
+							boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)',
+							display: 'flex',
+							flexDirection: 'column',
+							gap: 4,
+							pointerEvents: 'all',
+							zIndex: 1000,
+						}}
+						onPointerDown={stopEventPropagation}
+					>
+						<button
+							type="button"
+							onClick={(event) => {
+								event.stopPropagation()
+								setViewMode(viewMode === 'rendered' ? 'code' : 'rendered')
+								setIsMenuOpen(false)
+							}}
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								gap: 8,
+								width: '100%',
+								padding: '8px 10px',
+								border: 'none',
+								borderRadius: 'var(--radius-2)',
+								background: 'transparent',
+								color: 'var(--color-text)',
+								cursor: 'pointer',
+								fontSize: 12,
+								textAlign: 'left',
+							}}
+						>
+							{viewToggleIcon}
+							<span>{viewToggleLabel}</span>
+						</button>
+						<button
+							type="button"
+							onClick={(event) => {
+								event.stopPropagation()
+								if (navigator && navigator.clipboard) {
+									navigator.clipboard.writeText(shape.props.html)
+									toast.addToast({ icon: 'duplicate', title: 'Copied to clipboard' })
+								}
+								setIsMenuOpen(false)
+							}}
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								gap: 8,
+								width: '100%',
+								padding: '8px 10px',
+								border: 'none',
+								borderRadius: 'var(--radius-2)',
+								background: 'transparent',
+								color: 'var(--color-text)',
+								cursor: 'pointer',
+								fontSize: 12,
+								textAlign: 'left',
+							}}
+						>
+							<TldrawUiIcon icon="duplicate" />
+							<span>Copy HTML</span>
+						</button>
 					</div>
 				)}
 				{htmlToUse && (
@@ -251,11 +412,4 @@ const ROTATING_BOX_SHADOWS = [
 		color: '#0000001f',
 	},
 ]
-
-
-
-
-
-
-
 
